@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name='copyright' content='HTW DRESDEN'>
+    <meta name='author' content='ben and eric, s74083@htw-dresden.de'>
+    <meta name='language' content='DE'> 
+    <title>Better JSON Viewer</title>
+    <!-- Bootstrap -->
+    <link href="style/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style/css/own.css" rel="stylesheet">
+    <link href="style/css/jquery.circliful.css"  rel="stylesheet">
+    <!-- Vue -->
+    <script src="dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+    <!-- Header -->
+    
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">              
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only" id="NavEinAus">Navigation ein-/ausblenden</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">Projekt-Titel</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ansicht <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                      <li><a class="btn" v-on:click="KlappAllOut()" id="KartenEinAus">Alle Karten einklappen</a></li>
+                    </ul>
+                  </li> 
+                  <li><a href="#contact">Kontakt</a></li>             
+              </ul>
+              <form class="navbar-form navbar-right">
+                <div class="form-group">
+                  <input v-on:keyup="search" type="text" placeholder="Suche" class="form-control">
+                </div>
+              </form>
+            </div><!--/.navbar-collapse -->
+          </div>
+      </nav>
+    <!-- /Header -->
+    <!-- Content -->
+      <div class="container">
+        <div class="row">
+            <!-- Middle -->
+            <div class="col-lg-8 ">
+              <!-- Control -->
+              <div class="card text-center control" id="view">
+                <h4>Suche</h4>
+                <hr>
+                
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default" v-on:click="SortName">Projekt-Titel
+                        <span class="glyphicon glyphicon-triangle-bottom" id="SortNameSpan" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" v-on:click="SortInitiator">Initiator
+                        <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" v-on:click="SortLocation">Ort
+                        <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              <hr>
+              <!-- Childs -->
+              <div v-for="(item_1, i) in json_tmp">
+                <div class="panel panel-default" id="item_1.id">
+                  <div class="panel-heading"><h4>{{item_1.name}}</h4></div>
+                  <div class="panel-body">
+                  <div class="row">
+                    <div class="col-lg-10">
+                    <h6 class="card-subtitle mb-2 text-muted">{{item_1.description}}</h6>
+                    </div>
+                    <div class="col-lg-2">
+                    <button type="button" class="btn btn-default" v-on:click="KlappOut(i)">
+                      <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>
+                    </button>  
+                    </div>
+                  </div>
+                    <p class="card-text"></p>
+                    <div :id=i class="mem">
+                    <h4>Infos</h4>
+                    <table class="table table-striped">
+                        <tr>
+                          <td class="col-lg-2">Wo?</td>
+                          <td>{{GetLocation(item_1.location)}}</td>
+                        </tr>
+                        <tr>
+                          <td>Wer?</td>
+                          <td>{{GetInitiator(item_1.initiator)}}</td>
+                        </tr>
+                        <tr>
+                          <td>Wann?</td>
+                          <td>{{GetTime(item_1.start)}} {{item_1["end (optional)"] ? "- " + GetTime(item_1["end (optional)"]): ""}} </td>
+                        </tr>
+                        <tr>
+                          <td>Teilnehmer</td>
+                          <td>{{GetMembers(item_1.participants)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td  v-bind:class="SetColorParti(item_1.participation)">{{item_1.participation}}</td>
+                        </tr>
+                    </table>
+                    <hr>
+                    <h4>Verbindungen</h4>
+                      <table class="table ">
+                        <thead class="thead-inverse">
+                          <tr>
+                            <td class="col-lg-6">Von:</td>
+                            <td>Zu:</td>
+                          </tr>
+                        </thead>  
+                          <tr>
+                            <td>{{GetConnections(item_1.connection.from)}}</td>
+                            <td>{{GetConnections(item_1.connection.to)}}</td>
+                          </tr>
+                      </table>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
+          <!-- Sidebar -->
+            <div class="col-lg-3 pull-right">
+              <h2>Alles</h2>
+              <!--
+              <hr>
+              <h3>Suche</h3>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div id="circle_1">Projekte</div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div id="circle_2">Personen</div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div id="circle_3">Orte</div>
+                    </div>
+                  </div> -->
+              <h3>Datei</h3>
+              <hr>
+              <table class="table table-striped">
+              <tr>
+                <td>Projekte:</td>
+                <td>{{child_num}}</td>
+              </tr>
+              <tr>
+                <td>Orte:</td>
+                <td>{{locat_num}}</td>
+              </tr>
+              <tr>
+                <td>Personen:</td>
+                <td>{{stake_num}}</td>
+              </tr>
+              </table>
+              <h3>Personen</h3>
+              <hr>
+              <ol class="list-unstyled">
+                <div v-for="item_0 in json_data.process.stakeholder">
+                  <li><a href="#" v-on:click="search(item_0.name)">{{item_0.name}}</a></li>   
+                </div>
+              </ol>
+              <h3>Orte</h3>
+              <hr>
+              <ol class="list-unstyled">
+                <div v-for="item_0 in json_data.process.locations">
+                  <li><a href="#" v-on:click="search(item_0.city)">{{item_0.city}}</a></li>   
+                </div>
+              </ol>
+            </div>
+
+        </div>
+      </div>
+    <!--/ Content -->
+    <!-- Footer   -->
+      <footer class="footer" id="contact">
+       <div class="container">
+        <div class="row">
+          <div class="col-lg-11 ">
+            <div class="card">
+            <div class="card-block card-inverse">
+              <h4 class="card-title">Kontakt</h4>
+              <p class="card-text">{{json_data.system.email}}</p>
+              <p class="card-text">{{json_data.system.contact}}</p>
+              <p class="card-text">{{json_data.system.website}}</p>    
+            </div>
+            </div>
+          </div>
+          <div class="col-lg-1 ">
+            <div class="copyrightbox">
+              <h4 class="card-title exfont">BENSON ERICSON</h4>   
+            </div>
+          </div>
+        </div>
+       </div>    
+      </footer>
+    </div>
+
+    <!-- /Footer  -->
+    <!-- Javascript -->
+    <script src="dist/jquery-3.2.1.min.js"></script>
+    <script src="style/js/bootstrap.min.js"></script>
+    <script src="dist/script.js"></script>
+    <script src="style/js/jquery.circliful.min.js"></script>
+  </body>
+</html>
