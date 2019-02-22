@@ -55,4 +55,4 @@ https://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-object
 
 ## Copyright
 
-<a href="https://github.com/fibll">Ben S. (s74083)</a> ; Eric S. (s73952)
+<a href="https://github.com/bens-beacon">Ben S. (s74083)</a> ; Eric S. (s73952)
