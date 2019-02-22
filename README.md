@@ -28,7 +28,7 @@ Lese die JSON-Datei aus und visualisiere deren Inhalte! Die Seite soll zwar ein 
 * Verbindungen schöner darstellen
 * Lösungen anzeigen?! -> Weiß nicht ob wichtig.
 
-## Eigentliche Aufgabe von Prof. Freitag
+## Eigentliche Aufgabe
 
 * interaktive Website als One-Pager
 * nutze CSS Bibliothek -> Bootstrap
@@ -55,4 +55,4 @@ https://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-object
 
 ## Copyright
 
-Ben S. (s74083) ; Eric S. (s73952)
+<a href="https://github.com/fibll">Ben S. (s74083)</a> ; Eric S. (s73952)
